@@ -26,8 +26,15 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+const usersCollection=client.db("schoolDB").collection("users")
 const classCollection=client.db("schoolDB").collection("class")
 const instructorCollection=client.db("schoolDB").collection("instructor")
+
+app.post('/users', async(req,res)=>{
+    const item=req.body;
+    const result=await usersCollection.insertOne(item)
+    res.send(result)
+})
 
 app.get('/class',async(req,res)=>{
     const result=await classCollection.find().toArray();
