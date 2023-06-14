@@ -32,13 +32,34 @@ const instructorCollection=client.db("schoolDB").collection("instructor")
 // post user
 app.post('/users', async(req,res)=>{
     const item=req.body;
+
+    const query={email: item.email}
+    const existingUser=await usersCollection.findOne(query)
+    if(existingUser){
+      return res.send({message: 'You already existing'})
+    }
     const result=await usersCollection.insertOne(item)
     res.send(result)
 })
 
 // user update
-// create admin
 
+// delete user
+
+app.delete('/users/:id',async(req,res)=>{
+  const id=req.params.id;
+  const query={_id:new ObjectId(id)}
+  const result=await usersCollection.deleteOne(query)
+  res.send(result)
+})
+// get one data
+app.get('/users/:email',async(req,res)=>{
+const email=req.params.email
+const query={email:email}
+const result=await usersCollection.findOne(query)
+res.send(result)
+})
+// create admin
 app.patch('/users/admin/:id',async(req,res)=>{
   const id=req.params.id
   const filter={_id: new ObjectId(id)}
@@ -79,6 +100,31 @@ app.post("/class",async(req,res)=>{
   res.send(result)
 })
 
+// update
+app.put("/class/:id",async(req,res)=>{
+  const id=req.params.id;
+  const updateClass=req.body;
+  
+  const filter={_id : new ObjectId(id)}
+  const options={upsert:true}
+  const  updateData={
+    $set:{
+      status:updateClass.status,
+      
+    }
+  }
+const result=await classCollection.updateOne(filter,updateData,options)
+res.send(result)
+
+})
+
+// delete
+app.delete('/class/:id',async(req,res)=>{
+  const id=req.params.id
+  const query={_id: new ObjectId(id)}
+  const result=await classCollection.deleteOne(query)
+  res.send(result)
+})
 // get class
 app.get('/class',async(req,res)=>{
     const result=await classCollection.find().toArray();
