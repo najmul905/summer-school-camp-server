@@ -29,6 +29,7 @@ async function run() {
 const usersCollection=client.db("schoolDB").collection("users")
 const classCollection=client.db("schoolDB").collection("class")
 const instructorCollection=client.db("schoolDB").collection("instructor")
+const userDataCollection=client.db("schoolDB").collection("userData")
 // post user
 app.post('/users', async(req,res)=>{
     const item=req.body;
@@ -41,8 +42,26 @@ app.post('/users', async(req,res)=>{
     const result=await usersCollection.insertOne(item)
     res.send(result)
 })
+// userData post
+app.post('/userData', async(req,res)=>{
+    const item=req.body;
 
-// user update
+    const query={email: item.email}
+    const existingUser=await userDataCollection.findOne(query)
+    if(existingUser){
+      return res.send({message: 'You already existing'})
+    }
+    const result=await userDataCollection.insertOne(item)
+    res.send(result)
+})
+
+// userData get update
+
+app.get('/userData',async(req,res)=>{
+  const data=req.body
+  const result=await userDataCollection.find().toArray()
+  res.send(result)
+})
 
 // delete user
 
