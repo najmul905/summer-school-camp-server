@@ -45,8 +45,8 @@ app.post('/users', async(req,res)=>{
 // userData post
 app.post('/userData', async(req,res)=>{
     const item=req.body;
-
-    const query={email: item.email}
+const id=item.id
+const query={_id:new ObjectId(id)}
     const existingUser=await userDataCollection.findOne(query)
     if(existingUser){
       return res.send({message: 'You already existing'})
